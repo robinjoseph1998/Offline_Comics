@@ -13,3 +13,7 @@ type Result struct {
 	Title       string `json:"title"`
 	Day         string `json:"day"`
 }
+
+type Job struct {
+	Number int
+}

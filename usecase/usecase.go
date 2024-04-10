@@ -48,3 +48,7 @@ func Fetch(URL string, n int) (utils.Result, error) {
 	return data, nil
 
 }
+
+var jobs = make(chan int, 100)
+var results = make(chan utils.Result, 100)
+var resultCollection []utils.Result
