@@ -52,3 +52,10 @@ func Fetch(URL string, n int) (utils.Result, error) {
 var jobs = make(chan int, 100)
 var results = make(chan utils.Result, 100)
 var resultCollection []utils.Result
+
+func AllocateJobs(intJobs int) {
+	for i := 0; i < intJobs; i++ {
+		job := utils.Job{Number: i + 1}
+		jobs <- job.Number
+	}
+}
