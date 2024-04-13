@@ -59,7 +59,8 @@ type Job struct {
 
 var jobs = make(chan Job, 100)
 var results = make(chan utils.Result, 100)
-var resultCollection []utils.Result
+
+// var resultCollection []utils.Result
 
 func AllocateJobs(intJobs int) {
 	for i := 0; i < intJobs; i++ {
@@ -68,7 +69,7 @@ func AllocateJobs(intJobs int) {
 	close(jobs)
 }
 
-func worker(wg *sync.WaitGroup) {
+func Worker(wg *sync.WaitGroup) {
 	for job := range jobs {
 		result, err := Fetch(job.number)
 		if err != nil {
@@ -78,4 +79,22 @@ func worker(wg *sync.WaitGroup) {
 		results <- *&result
 	}
 	wg.Done()
+}
+
+func CreateWorkerPool(noOfworkers int) {
+	var wg sync.WaitGroup
+	for i := 0; i < noOfworkers; i++ {
+		wg.Add(1)
+		go Worker(&wg)
+	}
+	wg.Wait()
+	close(results)
+}
+
+func GetResults(done chan bool, resultCollection []utils.Result) {
+	for result := range results {
+		fmt.Printf("retriving issues #%d\n", result.Num)
+		resultCollection = append(resultCollection, result)
+	}
+	done <- true
 }
